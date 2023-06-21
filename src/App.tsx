@@ -4,7 +4,7 @@ import {useCallback, useEffect, useState} from "react";
 import './App.css'
 
 function App() {
-    const configuration = new Configuration({apiKey: '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'});
+    const configuration = new Configuration({apiKey: ''});
     delete configuration.baseOptions.headers['User-Agent'];
     const openai = new OpenAIApi(configuration);
     
