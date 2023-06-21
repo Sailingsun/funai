@@ -1,35 +1,36 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { Configuration, OpenAIApi } from 'openai';
+import {useCallback, useEffect, useState} from "react";
+
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank" rel="noreferrer">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    const configuration = new Configuration({apiKey: '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'});
+    delete configuration.baseOptions.headers['User-Agent'];
+    const openai = new OpenAIApi(configuration);
+    
+    const [data, setData] = useState('');
+    const [inputData, setInputData] = useState('');
+    
+    const onChange = useCallback(e => {
+        setInputData(e.target.value);
+    }, []);
+    
+    const onSubmit = useCallback(async () => {
+        const chatCompletion = await openai.createChatCompletion({
+            model: 'gpt-3.5-turbo',
+            messages: [{role: 'user', content: inputData}]
+        });
+        
+        setData(chatCompletion.data.choices[0].message.content);
+    }, [inputData]);
+    
+    return (
+        <>
+            <input value={inputData} onChange={onChange} />
+            <button onClick={onSubmit}>submit</button>
+            <div>{data}</div>
+        </>
+    );
 }
 
 export default App
